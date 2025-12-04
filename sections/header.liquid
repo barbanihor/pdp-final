@@ -1,54 +1,111 @@
-<header>
-  <h2 class="header__title">
-    {{ shop.name | link_to: routes.root_url }}
-  </h2>
+<header class="header">
+  <nav class="header__nav">
+    <button class="header__menu-btn" aria-label="Open navigation menu">
+      <img
+        src="{{ 'burger-menu.svg' | asset_url }}"
+        alt="Burger menu icon"
+        class="header__burger-menu-img"
+        width="24"
+        height="24"
+      >
+    </button>
 
-  <div class="header__menu">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
+    <a href="{{ routes.root_url }}" class="header__logo-link">
+      <img src="{{ 'logo.svg' |  asset_url }}" alt="Stellar Soft logo" width="100" height="24">
+    </a>
 
-  <div class="header__icons">
-    {% if shop.customer_accounts_enabled %}
-      {{ 'icon-account.svg' | inline_asset_content | link_to: routes.account_url }}
-    {% endif %}
+    <ul class="header__menu">
+      {% for link in section.settings.menu.links %}
+        <li class="header__menu-item">
+          {{ link.title | link_to: link.url, class: 'header__menu-link' }}
+        </li>
+      {% endfor %}
+    </ul>
 
     <a href="{{ routes.cart_url }}">
       {% if cart.item_count > 0 %}
         <sup>{{ cart.item_count }}</sup>
       {% endif %}
 
-      {{ 'icon-cart.svg' | inline_asset_content }}
+      <img
+        src="{{ "cart-icon.svg" | asset_url }}"
+        width="24"
+        height="24"
+        class="header__cart-img"
+        alt="Shopping cart icon"
+      >
     </a>
-  </div>
+  </nav>
 </header>
 
 {% stylesheet %}
-  header {
-    height: 5rem;
+  .header {
     display: flex;
-    align-items: center;
+    width: 100%;
+    height: 56px;
+    min-width: 375px;
+    padding-inline: 6px;
+  }
+
+  .header__nav {
+    width: 100%;
+    display: flex;
     justify-content: space-between;
+    align-items: center;
   }
-  header a {
-    position: relative;
+
+  .header__menu {
+    display: none;
+    gap: 32px;
+    list-style: none;
+    padding: 0;
+  }
+
+  .header__menu-link {
+    color: inherit;
     text-decoration: none;
-    color: var(--color-foreground);
   }
-  header a sup {
-    position: absolute;
-    left: 100%;
-    overflow: hidden;
-    max-width: var(--page-margin);
+
+  .header__menu-btn {
+    padding: 10px;
   }
-  header svg {
-    width: 2rem;
+
+  .header__logo-link {
+    display: none;
+    padding: 20px;
   }
-  header .header__menu,
-  header .header__icons {
-    display: flex;
-    gap: 1rem;
+
+  .header__burger-menu-img,
+  .header__cart-img {
+    width: 24px;
+    height: 24px;
+  }
+
+  @media (min-width: 768px) {
+    .header {
+      padding-inline: 40px;
+      height: 84px;
+    }
+
+    .header__menu-btn {
+      padding: 20px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .header__menu {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .header__menu-btn {
+      display: none;
+    }
+
+    .header__logo-link {
+      display: block;
+    }
   }
 {% endstylesheet %}
 

@@ -29,14 +29,28 @@ svg {
 
 input,
 textarea,
-select {
+select,
+button {
   font: inherit;
+}
+
+input,
+textarea,
+select {
   border-radius: var(--style-border-radius-inputs);
 }
 
 select {
   background-color: var(--color-background);
   color: currentcolor;
+}
+
+button {
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
 }
 
 dialog {

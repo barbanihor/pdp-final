@@ -1,0 +1,17 @@
+<div class="price-block">
+  {%- if variant.compare_at_price > variant.price -%}
+    <div class="price-block__container">
+      <span class="price-block__compare-price">
+        {{ variant.compare_at_price | money }}
+      </span>
+
+      <span class="price-block__price">
+        {{ variant.price | money }}
+      </span>
+    </div>
+  {%- else -%}
+    <span class="price-block__price price-block__price--single">
+      {{ variant.price | money }}
+    </span>
+  {%- endif -%}
+</div>

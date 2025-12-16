@@ -48,5 +48,22 @@
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}"
+  },
+  "products": {
+    "product": {
+      "banner": {
+        "not_found": "Product not found",
+        "view_image": "View image",
+        "highly_rated": "Highly rated",
+        "select_color": "Select color",
+        "select_size": "Select size",
+        "size_guide": "Size Guide",
+        "add_to_bag": "Add to bag",
+        "in_stock": "In stock",
+        "low_stock": "Low stock",
+        "running_out": "Running out",
+        "unavailable": "Out of stock"
+      }
+    }
   }
 }

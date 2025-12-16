@@ -1,0 +1,83 @@
+{%- comment -%}
+  Universal Breadcrumb Component
+
+  Usage:
+    {% render 'breadcrumb' %}
+
+  Automatically detects page type and generates appropriate breadcrumb trail
+{%- endcomment -%}
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb__list">
+    <li class="breadcrumb__item">
+      <a href="{{ routes.root_url }}" class="breadcrumb__link">Home</a>
+    </li>
+
+    {%- case template.name -%}
+      {%- when 'product' -%}
+        {%- if collection -%}
+          <li class="breadcrumb__separator">/</li>
+          <li class="breadcrumb__item">
+            <a href="{{ collection.url }}" class="breadcrumb__link">{{ collection.title }}</a>
+          </li>
+        {%- endif -%}
+        <li class="breadcrumb__separator">/</li>
+        <li class="breadcrumb__item breadcrumb__item--current">
+          {{ product.title | escape }}
+        </li>
+
+      {%- when 'collection' -%}
+        <li class="breadcrumb__separator">/</li>
+        <li class="breadcrumb__item breadcrumb__item--current">
+          {{ collection.title | escape }}
+        </li>
+
+      {%- when 'blog' -%}
+        <li class="breadcrumb__separator">/</li>
+        <li class="breadcrumb__item breadcrumb__item--current">
+          {{ blog.title | escape }}
+        </li>
+
+      {%- when 'article' -%}
+        <li class="breadcrumb__separator">/</li>
+        <li class="breadcrumb__item">
+          <a href="{{ blog.url }}" class="breadcrumb__link">{{ blog.title }}</a>
+        </li>
+        <li class="breadcrumb__separator">/</li>
+        <li class="breadcrumb__item breadcrumb__item--current">
+          {{ article.title | escape }}
+        </li>
+
+      {%- when 'page' -%}
+        <li class="breadcrumb__separator">/</li>
+        <li class="breadcrumb__item breadcrumb__item--current">
+          {{ page.title | escape }}
+        </li>
+
+      {%- when 'search' -%}
+        <li class="breadcrumb__separator">/</li>
+        <li class="breadcrumb__item breadcrumb__item--current">
+          {{ 'general.search.title' | t | default: 'Search' }}
+        </li>
+
+      {%- when 'cart' -%}
+        <li class="breadcrumb__separator">/</li>
+        <li class="breadcrumb__item breadcrumb__item--current">
+          {{ 'cart.general.title' | t | default: 'Cart' }}
+        </li>
+
+      {%- when 'list-collections' -%}
+        <li class="breadcrumb__separator">/</li>
+        <li class="breadcrumb__item breadcrumb__item--current">
+          {{ 'collections.general.title' | t | default: 'Collections' }}
+        </li>
+
+      {%- when '404' -%}
+        <li class="breadcrumb__separator">/</li>
+        <li class="breadcrumb__item breadcrumb__item--current">
+          {{ 'general.404.title' | t | default: 'Page not found' }}
+        </li>
+
+    {%- endcase -%}
+  </ol>
+</nav>

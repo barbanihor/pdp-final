@@ -1,65 +1,84 @@
-.product-recommendations {
-  width: 100%;
+.shopify-section.product-recommendations-section {
+  display: flex !important;
+  justify-content: center;
   margin-top: 80px;
-  padding: 0 16px;
+  padding: 0 var(--layout-padding-mobile);
+  width: 100%;
+}
+
+@media screen and (max-width: 450px) {
+  .shopify-section.product-recommendations-section {
+    justify-content: initial;
+  }
 }
 
 .product-recommendations__container {
-  max-width: 1440px;
-  margin: 0 auto;
+  max-width: var(--layout-container-max-width-mobile);
+  width: 100%;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1279px) {
+  .product-recommendations__container {
+    max-width: var(--layout-container-max-width-tablet);
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  .product-recommendations__container {
+    max-width: var(--layout-max-width);
+  }
 }
 
 .product-recommendations__title {
-  font-size: 32px;
-  font-weight: 400;
-  line-height: 1.2;
-  margin: 0 0 40px 0;
   text-align: center;
 }
 
+@media screen and (max-width: 450px) {
+  .product-recommendations__title {
+    text-align: start;
+  }
+}
+
 .product-recommendations__slider-wrapper {
+  margin-top: 32px;
   position: relative;
-  margin-bottom: 80px;
 }
 
-.product-recommendations__slider {
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+.product-recommendations__swiper {
+  overflow: hidden;
 }
 
-.product-recommendations__slider::-webkit-scrollbar {
-  display: none;
-}
-
-.product-recommendations__grid {
+.product-recommendations__swiper .swiper-wrapper {
   display: flex;
-  gap: 16px;
 }
 
 .product-recommendations__arrow {
   display: none;
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: white;
-  border: 1px solid #e5e5e5;
+  top: 156px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
   cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
+  padding: 0;
+  z-index: 10;
   transition: all 0.2s ease;
 }
 
+.product-recommendations__arrow img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 .product-recommendations__arrow:hover {
-  background: #f5f5f5;
-  border-color: #d4d4d4;
+  opacity: 0.8;
+}
+
+.product-recommendations__arrow.swiper-button-disabled {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .product-recommendations__arrow--prev {
@@ -73,8 +92,14 @@
 .product-card {
   display: flex;
   flex-direction: column;
-  min-width: 280px;
-  flex-shrink: 0;
+  height: 100%;
+  width: 100%;
+  max-width: 312px;
+}
+
+.product-recommendations__swiper .swiper-slide {
+  width: auto;
+  max-width: 312px;
 }
 
 .product-card__link {
@@ -89,7 +114,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  background-color: #f5f5f5;
+  background-color: var(--color-gray-lighter);
   border-radius: 4px;
   overflow: hidden;
   margin-bottom: 16px;
@@ -111,7 +136,6 @@
   font-weight: 400;
   line-height: 1.5;
   margin: 0 0 8px 0;
-  color: #000;
 }
 
 .product-card__price {
@@ -119,46 +143,23 @@
   font-weight: 400;
   line-height: 1.5;
   margin: 0;
-  color: #000;
 }
 
 /* Tablet */
 @media screen and (min-width: 768px) {
-  .product-recommendations {
+  .shopify-section.product-recommendations-section {
     padding: 0 32px;
     margin-top: 100px;
   }
-
-  .product-recommendations__title {
-    font-size: 40px;
-    margin-bottom: 48px;
-  }
-
-  .product-card {
-    min-width: calc((100% - 48px) / 4);
-  }
-
-  .product-recommendations__grid {
-    gap: 16px;
-  }
 }
 
-/* Desktop */
 @media screen and (min-width: 1024px) {
-  .product-recommendations {
+  .shopify-section.product-recommendations-section {
     padding: 0 48px;
   }
 
   .product-recommendations__slider-wrapper {
-    padding: 0 24px;
-  }
-
-  .product-recommendations__grid {
-    gap: 20px;
-  }
-
-  .product-card {
-    min-width: calc((100% - 60px) / 4);
+    margin-top: 48px;
   }
 
   .product-recommendations__arrow {
@@ -166,9 +167,8 @@
   }
 }
 
-/* Large Desktop */
-@media screen and (min-width: 1440px) {
-  .product-recommendations__container {
-    padding: 0 48px;
+@media screen and (min-width: 1280px) {
+  .shopify-section.product-recommendations-section {
+    padding: 0 var(--layout-padding-desktop);
   }
 }

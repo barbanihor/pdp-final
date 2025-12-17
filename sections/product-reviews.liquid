@@ -1,0 +1,71 @@
+{{ 'product-reviews.css' | asset_url | stylesheet_tag }}
+
+<div class="product-reviews">
+  <h2 class="product-reviews__heading">Reviews</h2>
+
+  {% if product.metafields.custom.review_json %}
+    {% assign reviews = product.metafields.custom.review_json.value %}
+  {% else %}
+    {% assign reviews = '' | split: '' %}
+    {% assign fallback_review_1 = '{"stars": 5, "review": "Absolutely love this product! The quality is outstanding and it exceeded my expectations. Highly recommend to anyone looking for premium quality.", "name": "Sarah Johnson", "photo": "https://randomuser.me/api/portraits/women/44.jpg", "town": "Los Angeles"}' | parse_json %}
+    {% assign fallback_review_2 = '{"stars": 5, "review": "Great purchase! Fast shipping and the product looks even better in person. The attention to detail is impressive.", "name": "Michael Chen", "photo": "https://randomuser.me/api/portraits/men/32.jpg", "town": "San Francisco"}' | parse_json %}
+    {% assign fallback_review_3 = '{"stars": 4, "review": "Very satisfied with my order. The product is well-made and stylish. Would definitely buy again!", "name": "Emma Williams", "photo": "https://randomuser.me/api/portraits/women/68.jpg", "town": "Seattle"}' | parse_json %}
+    {% assign reviews = reviews | concat: fallback_review_1 | concat: fallback_review_2 | concat: fallback_review_3 %}
+  {% endif %}
+
+  <div class="product-reviews__cards">
+    {% for review in reviews limit: 3 %}
+      <div class="review-card">
+        <div class="review-card__stars">
+          {% for i in (1..5) %}
+            {% if i <= review.stars %}
+              {{ 'rating-star.svg' | asset_url | img_tag: '', class: 'review-card__star' }}
+            {% else %}
+              {{ 'rating-star-empty.svg' | asset_url | img_tag: '', class: 'review-card__star' }}
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        {% if review.review %}
+          <p class="review-card__review">{{ review.review }}</p>
+        {% endif %}
+
+        <div class="review-card__author">
+          {% if review.photo %}
+            <img
+              src="{{ review.photo }}"
+              alt="{{ review.name | escape }}"
+              class="review-card__photo"
+              loading="lazy"
+              width="60"
+              height="60"
+            >
+          {% endif %}
+
+          <div class="review-card__info">
+            {% if review.name %}
+              <div class="review-card__name">{{ review.name }}</div>
+            {% endif %}
+            {% if review.town %}
+              <div class="review-card__town">{{ review.town }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product Reviews",
+  "tag": "section",
+  "class": "product-reviews-section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Product Reviews"
+    }
+  ]
+}
+{% endschema %}

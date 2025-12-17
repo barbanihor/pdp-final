@@ -10,7 +10,15 @@
     "recommendations": {
       "type": "product-recommendations",
       "settings": {}
+    },
+    "reviews": {
+      "type": "product-reviews",
+      "settings": {}
+    },
+    "hero-banner": {
+      "type": "hero-banner",
+      "settings": {}
     }
   },
-  "order": ["main", "recommendations"]
+  "order": ["main", "recommendations", "reviews", "hero-banner"]
 }

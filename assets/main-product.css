@@ -497,9 +497,6 @@
   cursor: pointer;
   text-decoration: none;
   transition: text-decoration 0.2s ease;
-}
-
-.product-detail__size-guide:hover {
   text-decoration: underline;
 }
 

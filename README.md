@@ -1,160 +1,181 @@
-<h1 align="center" style="position: relative;">
-  <br>
-    <img src="./assets/shoppy-x-ray.svg" alt="logo" width="200">
-  <br>
-  Shopify Skeleton Theme
-</h1>
+# Shopify PDP Theme
 
-A minimal, carefully structured Shopify theme designed to help you quickly get started. Designed with modularity, maintainability, and Shopify's best practices in mind.
+Shopify тема з повною реалізацією Product Detail Page (сторінки продукту).
 
-<p align="center">
-  <a href="./LICENSE.md"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
-  <a href="./actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Shopify/skeleton-theme/actions/workflows/ci.yml/badge.svg"></a>
-</p>
+## Як запустити
 
-## Getting started
-
-### Prerequisites
-
-Before starting, ensure you have the latest Shopify CLI installed:
-
-- [Shopify CLI](https://shopify.dev/docs/api/shopify-cli) – helps you download, upload, preview themes, and streamline your workflows
-
-If you use VS Code:
-
-- [Shopify Liquid VS Code Extension](https://shopify.dev/docs/storefronts/themes/tools/shopify-liquid-vscode) – provides syntax highlighting, linting, inline documentation, and auto-completion specifically designed for Liquid templates
-
-### Clone
-
-Clone this repository using Git or Shopify CLI:
-
+### 1. Встановити Shopify CLI
 ```bash
-git clone git@github.com:Shopify/skeleton-theme.git
-# or
-shopify theme init
+npm install -g @shopify/cli @shopify/theme
 ```
 
-### Preview
+### 2. Залогінитись
+```bash
+shopify auth login
+```
 
-Preview this theme using Shopify CLI:
-
+### 3. Запустити локально
 ```bash
 shopify theme dev
 ```
 
-## Theme architecture
+Відкриється локальний сервер з preview URL.
 
+### 4. Задеплоїти на Shopify
 ```bash
-.
-├── assets          # Stores static assets (CSS, JS, images, fonts, etc.)
-├── blocks          # Reusable, nestable, customizable UI components
-├── config          # Global theme settings and customization options
-├── layout          # Top-level wrappers for pages (layout templates)
-├── locales         # Translation files for theme internationalization
-├── sections        # Modular full-width page components
-├── snippets        # Reusable Liquid code or HTML fragments
-└── templates       # Templates combining sections to define page structures
+shopify theme push
 ```
 
-To learn more, refer to the [theme architecture documentation](https://shopify.dev/docs/storefronts/themes/architecture).
+## Що реалізовано
 
-### Templates
+### Product Detail Page
 
-[Templates](https://shopify.dev/docs/storefronts/themes/architecture/templates#template-types) control what's rendered on each type of page in a theme.
+#### Основна секція продукту
+- Галерея з превʼюшками (перша картинка eager, решта lazy)
+- Підтримка відео (HTML5, YouTube, Vimeo) з автоплеєм
+- Вибір кольору через related products
+- Вибір розміру
+- Динамічна ціна (зі знижкою і без)
+- Статус наявності (в наявності, мало, закінчується, немає)
+- Рейтинг продукту
+- Акордеон з деталями
+- Sticky Add to Cart при скролі
 
-The Skeleton Theme scaffolds [JSON templates](https://shopify.dev/docs/storefronts/themes/architecture/templates/json-templates) to make it easy for merchants to customize their store.
+#### Рекомендації
+- Секція "You May Also Like"
+- Slider з продуктами
+- Оновлюється при зміні кольору
 
-None of the template types are required, and not all of them are included in the Skeleton Theme. Refer to the [template types reference](https://shopify.dev/docs/storefronts/themes/architecture/templates#template-types) for a full list.
+#### Відгуки
+- Відображення відгуків з рейтингом
+- Fallback відгуки якщо немає даних
 
-### Sections
+#### Hero Banner
+- Банер з кнопкою
+- Редагується в кастомайзері
 
-[Sections](https://shopify.dev/docs/storefronts/themes/architecture/sections) are Liquid files that allow you to create reusable modules of content that can be customized by merchants. They can also include blocks which allow merchants to add, remove, and reorder content within a section.
+### Header & Footer
+- Адаптивна навігація
+- Кошик з іконкою
+- Footer з акордеоном на мобілці
 
-Sections are made customizable by including a `{% schema %}` in the body. For more information, refer to the [section schema documentation](https://shopify.dev/docs/storefronts/themes/architecture/sections/section-schema).
+### Кошик
+- Додавання/видалення товарів
+- Зміна кількості
+- Підсумок замовлення
 
-### Blocks
+### Головна
+- Грід з усіма продуктами
+- Адаптивний: 2 → 3 → 4 колонки
 
-[Blocks](https://shopify.dev/docs/storefronts/themes/architecture/blocks) let developers create flexible layouts by breaking down sections into smaller, reusable pieces of Liquid. Each block has its own set of settings, and can be added, removed, and reordered within a section.
+## Метафілди
 
-Blocks are made customizable by including a `{% schema %}` in the body. For more information, refer to the [block schema documentation](https://shopify.dev/docs/storefronts/themes/architecture/blocks/theme-blocks/schema).
+### 1. Related Products (кольори)
+```
+Namespace: custom
+Key: related_products
+Type: list.product_reference
+```
+Використовується для вибору кольору - список продуктів різних кольорів.
 
-## Schemas
+### 2. Accordion (деталі продукту)
+```
+Namespace: custom
+Key: accordion
+Type: list.metaobject_reference
+```
+Потрібно створити metaobject definition "accordion_item" з полями:
+- `title` - заголовок
+- `content` - текст
 
-When developing components defined by schema settings, we recommend these guidelines to simplify your code:
+### 3. Tagline (опціонально)
+```
+Namespace: custom
+Key: tagline
+Type: single_line_text_field
+```
+Додаткова інформація під продуктом.
 
-- **Single property settings**: For settings that correspond to a single CSS property, use CSS variables:
-
-  ```liquid
-  <div class="collection" style="--gap: {{ block.settings.gap }}px">
-    ...
-  </div>
-
-  {% stylesheet %}
-    .collection {
-      gap: var(--gap);
-    }
-  {% endstylesheet %}
-
-  {% schema %}
+### 4. Reviews (опціонально)
+```
+Namespace: custom
+Key: review_json
+Type: json
+```
+Формат:
+```json
+[
   {
-    "settings": [{
-      "type": "range",
-      "label": "gap",
-      "id": "gap",
-      "min": 0,
-      "max": 100,
-      "unit": "px",
-      "default": 0,
-    }]
+    "stars": 5,
+    "review": "Текст відгуку",
+    "name": "Імʼя",
+    "town": "Місто",
+    "photo": "URL фото"
   }
-  {% endschema %}
-  ```
+]
+```
+Якщо не заповнено - показуються fallback відгуки.
 
-- **Multiple property settings**: For settings that control multiple CSS properties, use CSS classes:
+## Структура
 
-  ```liquid
-  <div class="collection {{ block.settings.layout }}">
-    ...
-  </div>
+```
+.
+├── assets/           # CSS, JS, картинки
+├── sections/         # Секції (header, footer, main-product, etc.)
+├── snippets/         # Компоненти (price-block, accordion, etc.)
+├── templates/        # Шаблони сторінок
+└── locales/          # Переклади (en, uk)
+```
 
-  {% stylesheet %}
-    .collection--full-width {
-      /* multiple styles */
-    }
-    .collection--narrow {
-      /* multiple styles */
-    }
-  {% endstylesheet %}
+## Секції для мерчанта
 
-  {% schema %}
-  {
-    "settings": [{
-      "type": "select",
-      "id": "layout",
-      "label": "layout",
-      "values": [
-        { "value": "collection--full-width", "label": "t:options.full" },
-        { "value": "collection--narrow", "label": "t:options.narrow" }
-      ]
-    }]
-  }
-  {% endschema %}
-  ```
+### Main Product
+Основна секція продукту. Налаштування:
+- Показати бейдж "Highly Rated"
+- Рейтинг (1-5)
+- Текст рейтингу
 
-## CSS & JavaScript
+### Product Recommendations
+Автоматичні рекомендації від Shopify. Без налаштувань.
 
-For CSS and JavaScript, we recommend using the [`{% stylesheet %}`](https://shopify.dev/docs/api/liquid/tags#stylesheet) and [`{% javascript %}`](https://shopify.dev/docs/api/liquid/tags/javascript) tags. They can be included multiple times, but the code will only appear once.
+### Product Reviews
+Відгуки. Налаштовується через метафілд `review_json`.
 
-### `critical.css`
+### Hero Banner
+Налаштування:
+- Заголовок
+- Опис
+- Текст кнопки
 
-The Skeleton Theme explicitly separates essential CSS necessary for every page into a dedicated `critical.css` file.
+## Доступність (A11y)
 
-## Contributing
+- Клавіатурна навігація (Tab, Enter, Space)
+- ARIA labels для скрінрідерів
+- Semantic HTML
+- Alt текст на картинках
+- Правильні heading рівні
 
-We're excited for your contributions to the Skeleton Theme! This repository aims to remain as lean, lightweight, and fundamental as possible, and we kindly ask your contributions to align with this intention.
+## Переклади
 
-Visit our [CONTRIBUTING.md](./CONTRIBUTING.md) for a detailed overview of our process, guidelines, and recommendations.
+Підтримка мов:
+- Англійська (en.default.json)
+- Українська (uk.json)
 
-## License
+Додати нову мову:
+1. Створити файл `locales/CODE.json`
+2. Скопіювати структуру з `en.default.json`
+3. Перекласти
 
-Skeleton Theme is open-sourced under the [MIT](./LICENSE.md) License.
+## Оптимізації
+
+- Lazy loading картинок (крім першої)
+- Eager loading для першої картинки
+- Defer для JS
+- Responsive images з srcset
+- Мінімальний CSS у critical path
+
+## Підтримка браузерів
+
+- Chrome, Firefox, Safari, Edge (останні 2 версії)
+- Mobile Safari (iOS 12+)
+- Chrome Mobile (Android 8+)

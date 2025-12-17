@@ -5,7 +5,6 @@ class MainProduct {
 
     if (!this.section) return;
 
-    // Storage for prefetched product HTML
     this.productData = {};
 
     this.init();
@@ -96,7 +95,7 @@ class MainProduct {
 
       if (!newSection) return;
 
-      // Update specific parts of the page
+      // Update parts of the page
       this.updateGallery(newSection);
       this.updateTitle(newSection);
       this.updateDescription(newSection);
@@ -106,13 +105,14 @@ class MainProduct {
       this.updateSizes(newSection);
       this.updateColorButtons(newSection);
       this.updateAccordion(newSection);
+      this.updateStickyBar(doc);
 
       // Update URL
       window.history.pushState({}, '', `/products/${productHandle}`);
 
       // Dispatch event for product recommendations
       const productChangeEvent = new CustomEvent('product:changed', {
-        detail: { productHandle }
+        detail: { productHandle },
       });
       document.dispatchEvent(productChangeEvent);
     } catch (error) {
@@ -127,7 +127,7 @@ class MainProduct {
 
     if (currentGallery && newGallery) {
       currentGallery.innerHTML = newGallery.innerHTML;
-      this.setupGallery(); // Re-attach click handlers
+      this.setupGallery();
     }
   }
 
@@ -216,9 +216,18 @@ class MainProduct {
     const currentButtons = this.section.querySelectorAll('.product-detail__color');
     const newButtons = newSection.querySelectorAll('.product-detail__color');
 
-    currentButtons.forEach((btn, i) => {
-      const newBtn = newButtons[i];
-      if (newBtn && newBtn.classList.contains('product-detail__color--active')) {
+    currentButtons.forEach((btn) => {
+      const handle = btn.getAttribute('data-product-handle');
+
+      // Find matching button in new section by handle
+      const matchingNewBtn = Array.from(newButtons).find(
+        (newBtn) => newBtn.getAttribute('data-product-handle') === handle
+      );
+
+      if (
+        matchingNewBtn &&
+        matchingNewBtn.classList.contains('product-detail__color--active')
+      ) {
         btn.classList.add('product-detail__color--active');
       } else {
         btn.classList.remove('product-detail__color--active');
@@ -244,6 +253,69 @@ class MainProduct {
     } else if (currentAccordion && !newAccordion) {
       currentAccordion.remove();
     }
+  }
+
+  // Update sticky bar with new product data
+  updateStickyBar(doc) {
+    const currentStickyBar = document.querySelector(`#sticky-atc-${this.sectionId}`);
+
+    if (!currentStickyBar) {
+      return;
+    }
+
+    // Find the sticky bar in the fetched HTML document
+    const newStickyBar = doc.querySelector(`#sticky-atc-${this.sectionId}`);
+
+    if (!newStickyBar) {
+      return;
+    }
+
+    // Update sticky bar product info section completely
+    const currentProductInfo = currentStickyBar.querySelector(
+      '.sticky-atc__product-info'
+    );
+    const newProductInfo = newStickyBar.querySelector('.sticky-atc__product-info');
+
+    if (currentProductInfo && newProductInfo) {
+      currentProductInfo.innerHTML = newProductInfo.innerHTML;
+    }
+
+    // Update sticky bar color buttons active state
+    const currentColorButtons = currentStickyBar.querySelectorAll('.sticky-atc__color');
+    const newColorButtons = newStickyBar.querySelectorAll('.sticky-atc__color');
+
+    currentColorButtons.forEach((btn) => {
+      const handle = btn.getAttribute('data-product-handle');
+
+      // Find matching button in new sticky bar by handle
+      const matchingNewBtn = Array.from(newColorButtons).find(
+        (newBtn) => newBtn.getAttribute('data-product-handle') === handle
+      );
+
+      if (
+        matchingNewBtn &&
+        matchingNewBtn.classList.contains('sticky-atc__color--active')
+      ) {
+        btn.classList.add('sticky-atc__color--active');
+      } else {
+        btn.classList.remove('sticky-atc__color--active');
+      }
+    });
+
+    // Update sticky bar size select options (custom select)
+    const currentCustomSelect = currentStickyBar.querySelector('[data-custom-select]');
+    const newCustomSelect = newStickyBar.querySelector('[data-custom-select]');
+
+    if (currentCustomSelect && newCustomSelect) {
+      // Replace the entire custom select component
+      currentCustomSelect.innerHTML = newCustomSelect.innerHTML;
+
+      // Re-initialize the custom select
+      this.initializeCustomSelect(currentCustomSelect);
+    }
+
+    // Re-setup color button listeners after update
+    this.setupStickyColorButtons();
   }
 
   // Setup accordion click handlers
@@ -307,12 +379,12 @@ class MainProduct {
           variantInput.value = variantId;
         }
 
-        // Sync sticky bar select
-        const stickySelect = document.querySelector(
-          `#sticky-size-select-${this.sectionId}`
+        // Sync sticky bar custom select
+        const stickyCustomSelect = document.querySelector(
+          `#sticky-size-${this.sectionId} [data-custom-select]`
         );
-        if (stickySelect) {
-          stickySelect.value = variantId;
+        if (stickyCustomSelect) {
+          this.updateCustomSelectValue(stickyCustomSelect, variantId);
         }
 
         // Update sticky price
@@ -382,21 +454,25 @@ class MainProduct {
 
     // Setup sticky bar interactions
     this.setupStickyBarInteractions();
+    this.setupStickyColorButtons();
   }
 
   // Setup sticky bar size select and button
   setupStickyBarInteractions() {
     const stickyBar = document.querySelector(`#sticky-atc-${this.sectionId}`);
-    const stickySelect = stickyBar.querySelector(`#sticky-size-select-${this.sectionId}`);
+    const stickyCustomSelect = stickyBar.querySelector('[data-custom-select]');
     const stickyButton = stickyBar.querySelector(`#sticky-submit-${this.sectionId}`);
     const mainVariantInput = this.section.querySelector(
       `#product-variant-id-${this.sectionId}`
     );
 
-    // Sync sticky select with main form
-    if (stickySelect) {
-      stickySelect.addEventListener('change', (e) => {
-        const variantId = e.target.value;
+    // Initialize custom select
+    if (stickyCustomSelect) {
+      this.initializeCustomSelect(stickyCustomSelect);
+
+      // Listen for variant changes from custom select
+      stickyCustomSelect.addEventListener('variantChange', (e) => {
+        const variantId = e.detail.variantId;
         mainVariantInput.value = variantId;
 
         // Update price in sticky bar
@@ -415,7 +491,10 @@ class MainProduct {
     // Sticky button click - submit main form
     if (stickyButton) {
       stickyButton.addEventListener('click', async () => {
-        const variantId = stickySelect ? stickySelect.value : mainVariantInput.value;
+        const hiddenInput = stickyCustomSelect
+          ? stickyCustomSelect.querySelector('[data-select-input]')
+          : null;
+        const variantId = hiddenInput ? hiddenInput.value : mainVariantInput.value;
 
         try {
           const response = await fetch('/cart/add.js', {
@@ -439,7 +518,9 @@ class MainProduct {
 
   // Update sticky bar price when variant changes
   async updateStickyPrice(variantId) {
-    const stickyPriceContainer = document.querySelector(`#sticky-price-${this.sectionId}`);
+    const stickyPriceContainer = document.querySelector(
+      `#sticky-price-${this.sectionId}`
+    );
     if (!stickyPriceContainer) return;
 
     // Find the variant data from the current product
@@ -457,6 +538,127 @@ class MainProduct {
         stickyPriceContainer.innerHTML = mainPriceContainer.innerHTML;
       }
     }
+  }
+
+  // Setup sticky bar color buttons
+  setupStickyColorButtons() {
+    const stickyBar = document.querySelector(`#sticky-atc-${this.sectionId}`);
+    if (!stickyBar) return;
+
+    const colorButtons = stickyBar.querySelectorAll('.sticky-atc__color');
+
+    colorButtons.forEach((button) => {
+      button.addEventListener('click', async () => {
+        // Skip if already active
+        if (button.classList.contains('sticky-atc__color--active')) {
+          return;
+        }
+
+        const handle = button.getAttribute('data-product-handle');
+        await this.switchProduct(handle);
+      });
+    });
+  }
+
+  // Initialize custom select component
+  initializeCustomSelect(selectElement) {
+    const trigger = selectElement.querySelector('[data-select-trigger]');
+    const dropdown = selectElement.querySelector('[data-select-dropdown]');
+    const valueElement = selectElement.querySelector('[data-select-value]');
+    const hiddenInput = selectElement.querySelector('[data-select-input]');
+    const options = selectElement.querySelectorAll('[data-select-option]');
+
+    // Remove old listeners
+    const newTrigger = trigger.cloneNode(true);
+    trigger.parentNode.replaceChild(newTrigger, trigger);
+
+    // Toggle dropdown
+    newTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = newTrigger.getAttribute('aria-expanded') === 'true';
+
+      // Close all other dropdowns
+      document.querySelectorAll('[data-select-trigger]').forEach((t) => {
+        if (t !== newTrigger) {
+          t.setAttribute('aria-expanded', 'false');
+          t.closest('[data-custom-select]')
+            .querySelector('[data-select-dropdown]')
+            .classList.remove('is-open');
+        }
+      });
+
+      // Toggle current dropdown
+      newTrigger.setAttribute('aria-expanded', !isOpen);
+      dropdown.classList.toggle('is-open');
+    });
+
+    // Select option
+    options.forEach((option) => {
+      const newOption = option.cloneNode(true);
+      option.parentNode.replaceChild(newOption, option);
+
+      newOption.addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        if (newOption.disabled) return;
+
+        const variantId = newOption.dataset.variantId;
+        const variantTitle = newOption.dataset.variantTitle;
+
+        // Update UI
+        valueElement.textContent = variantTitle;
+        hiddenInput.value = variantId;
+
+        // Update active state
+        selectElement.querySelectorAll('[data-select-option]').forEach((opt) => {
+          opt.classList.remove('custom-select__option--active');
+          opt.setAttribute('aria-selected', 'false');
+        });
+        newOption.classList.add('custom-select__option--active');
+        newOption.setAttribute('aria-selected', 'true');
+
+        // Close dropdown
+        newTrigger.setAttribute('aria-expanded', 'false');
+        dropdown.classList.remove('is-open');
+
+        // Trigger change event
+        const changeEvent = new CustomEvent('variantChange', {
+          detail: { variantId, variantTitle },
+        });
+        selectElement.dispatchEvent(changeEvent);
+      });
+    });
+
+    // Close dropdown when clicking outside
+    const closeHandler = (e) => {
+      if (!selectElement.contains(e.target)) {
+        newTrigger.setAttribute('aria-expanded', 'false');
+        dropdown.classList.remove('is-open');
+      }
+    };
+    document.addEventListener('click', closeHandler);
+  }
+
+  // Update custom select value
+  updateCustomSelectValue(selectElement, variantId) {
+    const valueElement = selectElement.querySelector('[data-select-value]');
+    const hiddenInput = selectElement.querySelector('[data-select-input]');
+    const options = selectElement.querySelectorAll('[data-select-option]');
+
+    options.forEach((option) => {
+      if (option.dataset.variantId === variantId) {
+        valueElement.textContent = option.dataset.variantTitle;
+        hiddenInput.value = variantId;
+
+        // Update active state
+        options.forEach((opt) => {
+          opt.classList.remove('custom-select__option--active');
+          opt.setAttribute('aria-selected', 'false');
+        });
+        option.classList.add('custom-select__option--active');
+        option.setAttribute('aria-selected', 'true');
+      }
+    });
   }
 }
 

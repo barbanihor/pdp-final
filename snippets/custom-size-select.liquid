@@ -1,0 +1,53 @@
+<div class="custom-select" data-custom-select>
+  <button
+    type="button"
+    class="custom-select__trigger"
+    data-select-trigger
+    aria-haspopup="listbox"
+    aria-expanded="false"
+  >
+    <span class="custom-select__value" data-select-value>
+      {{ selected_variant.title }}
+    </span>
+    <svg
+      class="custom-select__arrow"
+      width="12"
+      height="8"
+      viewBox="0 0 12 8"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+  <div class="custom-select__dropdown" data-select-dropdown role="listbox">
+    <div class="custom-select__options">
+      {% for variant in variants %}
+        <button
+          type="button"
+          class="custom-select__option {% if variant.id == selected_variant.id %}custom-select__option--active{% endif %} {% unless variant.available %}custom-select__option--disabled{% endunless %}"
+          data-select-option
+          data-variant-id="{{ variant.id }}"
+          data-variant-title="{{ variant.title }}"
+          role="option"
+          {% unless variant.available %}
+            disabled
+          {% endunless %}
+          {% if variant.id == selected_variant.id %}
+            aria-selected="true"
+          {% endif %}
+        >
+          {{ variant.title }}
+        </button>
+      {% endfor %}
+    </div>
+  </div>
+
+  <input
+    type="hidden"
+    name="id"
+    value="{{ selected_variant.id }}"
+    data-select-input
+  >
+</div>

@@ -1,4 +1,6 @@
-<header class="header full-width">
+{{ 'header.css' | asset_url | stylesheet_tag }}
+
+<header class="header">
   <nav class="header__nav">
     <button class="header__menu-btn" aria-label="Open navigation menu">
       <img
@@ -23,10 +25,6 @@
     </ul>
 
     <a href="{{ routes.cart_url }}">
-      {% if cart.item_count > 0 %}
-        <sup>{{ cart.item_count }}</sup>
-      {% endif %}
-
       <img
         src="{{ "cart-icon.svg" | asset_url }}"
         width="24"
@@ -37,83 +35,6 @@
     </a>
   </nav>
 </header>
-
-{% stylesheet %}
-  .header {
-    display: flex;
-    width: 100%;
-    height: 56px;
-    padding-inline: var(--layout-padding-mobile);
-  }
-
-  .header__nav {
-    width: 100%;
-    max-width: var(--layout-max-width);
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .header__menu {
-    display: none;
-    gap: 32px;
-    list-style: none;
-    padding: 0;
-  }
-
-  .header__menu-link {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .header__menu-btn {
-    padding: 10px;
-  }
-
-  .header__logo-link {
-    display: none;
-    padding: 20px;
-  }
-
-  .header__burger-menu-img,
-  .header__cart-img {
-    width: 24px;
-    height: 24px;
-  }
-
-  @media (min-width: 768px) {
-    .header {
-      height: 84px;
-    }
-
-    .header__menu-btn {
-      padding: 20px;
-    }
-  }
-
-  @media (min-width: 1280px) {
-    .header {
-      padding-inline: var(--layout-padding-desktop);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .header__menu {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .header__menu-btn {
-      display: none;
-    }
-
-    .header__logo-link {
-      display: block;
-    }
-  }
-{% endstylesheet %}
 
 {% schema %}
 {

@@ -9,7 +9,6 @@
     {{ 'products.product.banner.not_found' | t }}
   </p>
 {%- else -%}
-  {%- comment -%} Get related products from metafield {%- endcomment -%}
   {%- assign related_products_list = main_product.metafields.custom.related_products.value -%}
   <div
     id="main-product-{{ section.id }}"
@@ -18,9 +17,7 @@
   >
     <div class="product-grid__container">
       <div class="product-layout">
-        <!-- Gallery Section -->
         <div class="product-gallery">
-          <!-- Main Media -->
           <div class="product-gallery__main-wrapper">
             {%- if section.settings.rated -%}
               <div class="product-gallery__badge">
@@ -85,7 +82,6 @@
               {%- endunless -%}
             </div>
           </div>
-          <!-- Thumbnails -->
           {%- unless main_product.media == blank -%}
             <div class="product-gallery__thumbs">
               {%- for media in main_product.media limit: 5 -%}
@@ -152,14 +148,12 @@
           {%- endunless -%}
         </div>
 
-        <!-- Product Info Section -->
         <div class="product-detail">
           <div class="product-detail__header">
             <h2 class="product-detail__title">
               {{ main_product.title | escape }}
             </h2>
 
-            {%- comment -%} Product Rating {%- endcomment -%}
             <div class="product-detail__rating">
               {%- assign rating_value = section.settings.rating | default: 5 -%}
               {%- for i in (1..5) -%}
@@ -223,7 +217,6 @@
             >
 
             <div class="product-detail__options">
-              {%- comment -%} Color selection - always show current product + related products from metafield {%- endcomment -%}
               <div class="product-detail__colors">
                 <div class="product-detail__color-list">
                   {%- for related_product in related_products_list -%}
@@ -292,7 +285,6 @@
             </button>
           {%- endform -%}
 
-          {%- comment -%} Product Features {%- endcomment -%}
           <div class="product-detail__features">
             <div class="product-detail__feature">
               <img
@@ -302,7 +294,7 @@
                 width="20"
                 height="20"
               >
-              <span class="product-detail__feature-text">Free U.S. Shipping Over $150</span>
+              <span class="product-detail__feature-text">{{ 'products.product.banner.free_shipping' | t }}</span>
             </div>
             <div class="product-detail__feature">
               <img
@@ -312,7 +304,7 @@
                 width="20"
                 height="20"
               >
-              <span class="product-detail__feature-text">Safe & Secure Checkout</span>
+              <span class="product-detail__feature-text">{{ 'products.product.banner.secure_checkout' | t }}</span>
             </div>
             <div class="product-detail__feature">
               <img
@@ -322,7 +314,7 @@
                 width="20"
                 height="20"
               >
-              <span class="product-detail__feature-text">Afterpay available at checkout</span>
+              <span class="product-detail__feature-text">{{ 'products.product.banner.afterpay' | t }}</span>
             </div>
           </div>
 
@@ -341,7 +333,6 @@
 
   {%- render 'size-guide-modal' -%}
 
-  {%- comment -%} Sticky Add to Cart Bar {%- endcomment -%}
   <div class="sticky-atc" id="sticky-atc-{{ section.id }}" data-section-id="{{ section.id }}">
     <div class="sticky-atc__container">
       <div class="sticky-atc__product-info">
@@ -364,24 +355,43 @@
       </div>
 
       <div class="sticky-atc__actions">
-        <div class="sticky-atc__size-selector" id="sticky-size-{{ section.id }}">
-          <span class="sticky-atc__label">Size:</span>
-          <select class="sticky-atc__size-select" id="sticky-size-select-{{ section.id }}">
-            {%- for variant in main_product.variants -%}
-              <option
-                value="{{ variant.id }}"
-                {% if variant.id == selected_variant.id %}
-                  selected
+        <div class="sticky-atc__color-selector">
+          <span class="sticky-atc__label">{{ 'products.product.banner.color' | t }}:</span>
+          <div class="sticky-atc__color-list">
+            {%- for related_product in related_products_list -%}
+              {%- assign related_media = related_product.main_media | default: related_product.media.first -%}
+              <button
+                type="button"
+                class="sticky-atc__color {% if related_product.id == main_product.id %}sticky-atc__color--active{% endif %}"
+                data-product-handle="{{ related_product.handle }}"
+                data-product-id="{{ related_product.id }}"
+                data-section-id="{{ section.id }}"
+                {% if related_media %}
+                  data-color-image="{{ related_media | image_url: width: 176 }}"
                 {% endif %}
-                {% unless variant.available %}
-                  disabled
-                {% endunless %}
+                aria-label="{{ related_product.title }}"
               >
-                {{ variant.title -}}
-                {%- unless variant.available %} - Sold out{% endunless %}
-              </option>
+                {%- if related_media -%}
+                  {{
+                    related_media
+                    | image_url: width: 88
+                    | image_tag: width: 44, height: 44, loading: 'lazy', alt: related_product.title
+                  }}
+                {%- else -%}
+                  <span>{{ related_product.title }}</span>
+                {%- endif -%}
+              </button>
             {%- endfor -%}
-          </select>
+          </div>
+        </div>
+
+        <div class="sticky-atc__size-selector" id="sticky-size-{{ section.id }}">
+          <span class="sticky-atc__label">{{ 'products.product.banner.size' | t }}:</span>
+          {% render 'custom-size-select',
+            id: section.id,
+            variants: main_product.variants,
+            selected_variant: selected_variant
+          %}
         </div>
 
         <button

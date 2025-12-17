@@ -1,16 +1,7 @@
-{%- comment -%}
-  Universal Breadcrumb Component
-
-  Usage:
-    {% render 'breadcrumb' %}
-
-  Automatically detects page type and generates appropriate breadcrumb trail
-{%- endcomment -%}
-
 <nav class="breadcrumb" aria-label="Breadcrumb">
   <ol class="breadcrumb__list">
     <li class="breadcrumb__item">
-      <a href="{{ routes.root_url }}" class="breadcrumb__link">Home</a>
+      <a href="{{ routes.root_url }}" class="breadcrumb__link">{{ 'general.breadcrumb.home' | t }}</a>
     </li>
 
     {%- case template.name -%}
@@ -57,27 +48,26 @@
       {%- when 'search' -%}
         <li class="breadcrumb__separator">/</li>
         <li class="breadcrumb__item breadcrumb__item--current">
-          {{ 'general.search.title' | t | default: 'Search' }}
+          {{ 'general.search.title' | t }}
         </li>
 
       {%- when 'cart' -%}
         <li class="breadcrumb__separator">/</li>
         <li class="breadcrumb__item breadcrumb__item--current">
-          {{ 'cart.general.title' | t | default: 'Cart' }}
+          {{ 'cart.title' | t }}
         </li>
 
       {%- when 'list-collections' -%}
         <li class="breadcrumb__separator">/</li>
         <li class="breadcrumb__item breadcrumb__item--current">
-          {{ 'collections.general.title' | t | default: 'Collections' }}
+          {{ 'collections.title' | t }}
         </li>
 
       {%- when '404' -%}
         <li class="breadcrumb__separator">/</li>
         <li class="breadcrumb__item breadcrumb__item--current">
-          {{ 'general.404.title' | t | default: 'Page not found' }}
+          {{ 'general.404.title' | t }}
         </li>
-
     {%- endcase -%}
   </ol>
 </nav>

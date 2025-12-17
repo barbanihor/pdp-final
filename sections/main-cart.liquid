@@ -1,0 +1,111 @@
+{{ 'cart.css' | asset_url | stylesheet_tag }}
+
+<div class="cart">
+  <div class="cart__container">
+    {% if cart.item_count > 0 %}
+      <h1 class="cart__title">{{ 'cart.title' | t }} ({{ cart.item_count }})</h1>
+
+      <div class="cart__content">
+        <div class="cart__items">
+          {% for item in cart.items %}
+            <div class="cart__item" data-line-item="{{ forloop.index }}">
+              <img
+                src="{{ item.image | image_url: width: 120 }}"
+                alt="{{ item.title }}"
+                class="cart__item-image"
+                width="120"
+                height="120"
+              >
+
+              <div class="cart__item-details">
+                <h3 class="cart__item-title">{{ item.product.title }}</h3>
+                <p class="cart__item-variant">{{ item.variant.title }}</p>
+                <p class="cart__item-price">{{ item.final_price | money }}</p>
+              </div>
+
+              <div class="cart__item-quantity">
+                <button
+                  type="button"
+                  class="cart__qty-btn"
+                  data-action="decrease"
+                  data-line="{{ forloop.index }}"
+                  {% if item.quantity <= 1 %}disabled{% endif %}
+                >
+                  -
+                </button>
+                <input
+                  type="number"
+                  class="cart__qty-input"
+                  value="{{ item.quantity }}"
+                  min="1"
+                  data-line="{{ forloop.index }}"
+                  readonly
+                >
+                <button
+                  type="button"
+                  class="cart__qty-btn"
+                  data-action="increase"
+                  data-line="{{ forloop.index }}"
+                >
+                  +
+                </button>
+              </div>
+
+              <div class="cart__item-total">
+                {{ item.final_line_price | money }}
+              </div>
+
+              <button
+                type="button"
+                class="cart__item-remove"
+                data-line="{{ forloop.index }}"
+              >
+                {{ 'cart.remove' | t }}
+              </button>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="cart__summary">
+          <h2 class="cart__summary-title">{{ 'cart.order_summary' | t }}</h2>
+
+          <div class="cart__summary-line">
+            <span>{{ 'cart.subtotal' | t }}</span>
+            <span>{{ cart.total_price | money }}</span>
+          </div>
+
+          <div class="cart__summary-line cart__summary-line--total">
+            <span>{{ 'cart.total' | t }}</span>
+            <span>{{ cart.total_price | money }}</span>
+          </div>
+
+          <button type="button" class="cart__checkout-btn" onclick="window.location.href='/checkout'">
+            {{ 'cart.checkout' | t }}
+          </button>
+
+          <a href="{{ routes.all_products_collection_url }}" class="cart__continue-link">
+            {{ 'cart.continue_shopping' | t }}
+          </a>
+        </div>
+      </div>
+    {% else %}
+      <div class="cart__empty">
+        <h1 class="cart__empty-title">{{ 'cart.empty.title' | t }}</h1>
+        <p class="cart__empty-text">{{ 'cart.empty.text' | t }}</p>
+        <a href="{{ routes.all_products_collection_url }}" class="cart__empty-btn">
+          {{ 'cart.empty.button' | t }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script src="{{ 'cart.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Cart",
+  "class": "cart-section",
+  "settings": []
+}
+{% endschema %}

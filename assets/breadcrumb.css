@@ -1,6 +1,3 @@
-/* ========================================
-   Breadcrumb Navigation - Universal Component
-   ======================================== */
 .breadcrumb {
   width: 100%;
   padding-inline: var(--layout-padding-mobile);
@@ -8,10 +5,9 @@
   background-color: var(--color-white);
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 1024px) {
   .breadcrumb {
     padding-inline: var(--layout-padding-desktop);
-    margin-bottom: 24px;
   }
 }
 

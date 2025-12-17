@@ -1,0 +1,80 @@
+{{ 'featured-collection.css' | asset_url | stylesheet_tag }}
+
+<div class="featured-collection">
+  <div class="featured-collection__container">
+    {% if section.settings.title != blank %}
+      <h2 class="featured-collection__title">{{ section.settings.title }}</h2>
+    {% endif %}
+
+    {% assign collection = collections[section.settings.collection] %}
+
+    {% if collection.products.size > 0 %}
+      <div class="featured-collection__grid">
+        {% for product in collection.products limit: section.settings.products_to_show %}
+          <a href="{{ product.url }}" class="product-card">
+            <div class="product-card__image-wrapper">
+              {% if product.featured_image %}
+                <img
+                  src="{{ product.featured_image | image_url: width: 400 }}"
+                  alt="{{ product.title }}"
+                  class="product-card__image"
+                  loading="lazy"
+                  width="400"
+                  height="400"
+                >
+              {% endif %}
+            </div>
+
+            <div class="product-card__info">
+              <h3 class="product-card__title">{{ product.title }}</h3>
+
+              <div class="product-card__price">
+                {% if product.compare_at_price > product.price %}
+                  <span class="product-card__price--sale">{{ product.price | money }}</span>
+                  <span class="product-card__price--compare">{{ product.compare_at_price | money }}</span>
+                {% else %}
+                  <span class="product-card__price--regular">{{ product.price | money }}</span>
+                {% endif %}
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="featured-collection__empty">No products found in this collection.</p>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Featured Collection",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Featured Products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 50,
+      "step": 1,
+      "default": 12,
+      "label": "Products to show"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Collection"
+    }
+  ]
+}
+{% endschema %}

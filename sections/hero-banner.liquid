@@ -1,0 +1,40 @@
+<div class="hero-banner">
+  <div class="hero-banner__container">
+    <h2 class="hero-banner__title">{{ section.settings.title }}</h2>
+    <p class="hero-banner__description text-body-large">{{ section.settings.description }}</p>
+    <a href="#main-product-main" class="hero-banner__button">{{ section.settings.button_text }}</a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero Banner",
+  "tag": "section",
+  "class": "hero-banner-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Step Into Next-Level Comfort"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Experience the perfect mix of style, support, and all-day cushioning with Nike Air Max Plus."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop Now"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Banner"
+    }
+  ]
+}
+{% endschema %}

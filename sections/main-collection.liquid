@@ -1,0 +1,47 @@
+{{ 'all-products.css' | asset_url | stylesheet_tag }}
+
+<div class="all-products">
+  <div class="all-products__container">
+    <h1 class="all-products__title">{{ 'collections.all_products' | t }}</h1>
+
+    <div class="all-products__grid">
+      {% for product in collections.all.products %}
+        <a href="{{ product.url }}" class="product-card">
+          <div class="product-card__image-wrapper">
+            {% if product.featured_image %}
+              <img
+                src="{{ product.featured_image | image_url: width: 400 }}"
+                alt="{{ product.title }}"
+                class="product-card__image"
+                loading="lazy"
+                width="400"
+                height="400"
+              >
+            {% endif %}
+          </div>
+
+          <div class="product-card__info">
+            <h3 class="product-card__title">{{ product.title }}</h3>
+
+            <div class="product-card__price">
+              {% if product.compare_at_price > product.price %}
+                <span class="product-card__price--sale">{{ product.price | money }}</span>
+                <span class="product-card__price--compare">{{ product.compare_at_price | money }}</span>
+              {% else %}
+                <span class="product-card__price--regular">{{ product.price | money }}</span>
+              {% endif %}
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Main Collection",
+  "class": "main-collection-section",
+  "settings": []
+}
+{% endschema %}

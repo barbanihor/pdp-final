@@ -1,0 +1,107 @@
+.product-reviews-section {
+  display: flex !important;
+  justify-content: center;
+  margin-top: 80px;
+  padding: 0 var(--layout-padding-mobile);
+  width: 100%;
+}
+
+.product-reviews {
+  max-width: var(--layout-container-max-width-mobile);
+  width: 100%;
+}
+
+@media (min-width: 768px) and (max-width: 1279px) {
+  .product-reviews {
+    max-width: var(--layout-container-max-width-tablet);
+  }
+}
+
+@media (min-width: 1280px) {
+  .product-reviews {
+    max-width: var(--layout-max-width);
+  }
+}
+
+.product-reviews__heading {
+  text-align: center;
+}
+
+.product-reviews__cards {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 1280px) {
+  .product-reviews__cards {
+    flex-direction: row;
+    gap: 24px;
+  }
+}
+
+.review-card {
+  border: 1px solid var(--color-gray-lighter);
+  border-radius: 8px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1;
+}
+
+.review-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.review-card__stars {
+  display: flex;
+  gap: 2px;
+}
+
+.review-card__star {
+  width: 16px;
+  height: 16px;
+}
+
+.review-card__review {
+  min-width: 295px;
+  font-size: var(--text-body-large-size);
+  line-height: var(--text-body-large-height);
+  font-weight: var(--text-body-large-weight);
+  flex-grow: 1;
+}
+
+.review-card__author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.review-card__photo {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.review-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.review-card__name {
+  font-size: var(--text-body-large-size);
+  line-height: var(--text-body-large-height);
+  font-weight: var(--text-body-large-weight);
+}
+
+.review-card__town {
+  font-size: var(--text-body-large-size);
+  line-height: var(--text-body-large-height);
+  font-weight: var(--text-body-large-weight);
+  color: var(--color-gray-dark);
+}

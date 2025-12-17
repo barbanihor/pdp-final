@@ -15,9 +15,18 @@
   },
   "cart": {
     "checkout": "Checkout",
-    "title": "Cart",
+    "title": "Shopping Cart",
     "update": "Update",
-    "remove": "Remove"
+    "remove": "Remove",
+    "continue_shopping": "Continue Shopping",
+    "empty": {
+      "title": "Your cart is empty",
+      "text": "Add some products to get started.",
+      "button": "Shop Now"
+    },
+    "order_summary": "Order Summary",
+    "subtotal": "Subtotal",
+    "total": "Total"
   },
   "customers": {
     "login": {
@@ -28,7 +37,8 @@
     }
   },
   "collections": {
-    "title": "Collections"
+    "title": "Collections",
+    "all_products": "All Products"
   },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",
@@ -48,5 +58,81 @@
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}"
+  },
+  "products": {
+    "product": {
+      "banner": {
+        "not_found": "Product not found",
+        "view_image": "View image",
+        "highly_rated": "Highly rated",
+        "select_color": "Select color",
+        "select_size": "Select size",
+        "size_guide": "Size Guide",
+        "add_to_bag": "Add to bag",
+        "in_stock": "In stock",
+        "low_stock": "Low stock",
+        "running_out": "Running out",
+        "unavailable": "Out of stock",
+        "reviews": "Reviews",
+        "size": "Size",
+        "color": "Color",
+        "free_shipping": "Free U.S. Shipping Over $150",
+        "secure_checkout": "Safe & Secure Checkout",
+        "afterpay": "Afterpay available at checkout"
+      },
+      "recommendations": {
+        "you_may_like": "You may also like"
+      }
+    }
+  },
+  "general": {
+    "breadcrumb": {
+      "home": "Home"
+    },
+    "search": {
+      "title": "Search"
+    },
+    "404": {
+      "title": "Page not found"
+    }
+  },
+  "footer": {
+    "resources": {
+      "title": "Resources",
+      "find_store": "Find a Store",
+      "journal": "Nike Journal",
+      "become_member": "Become a Member",
+      "feedback": "Feedback",
+      "promo_codes": "Promo Codes"
+    },
+    "help": {
+      "title": "Help",
+      "get_help": "Get Help",
+      "order_status": "Order Status",
+      "shipping": "Shipping and Delivery",
+      "returns": "Returns",
+      "payment": "Payment Options"
+    },
+    "company": {
+      "title": "Company",
+      "about": "About Nike",
+      "news": "News",
+      "careers": "Careers",
+      "investors": "Investors",
+      "sustainability": "Sustainability"
+    },
+    "menu": {
+      "title": "Menu",
+      "new_featured": "New & Featured",
+      "men": "Men",
+      "women": "Women",
+      "kids": "Kids"
+    },
+    "legal": {
+      "copyright": "© 2025 Stellar Soft",
+      "terms": "Terms of Use",
+      "privacy": "Privacy & Cookie Policy",
+      "cookie_settings": "Privacy & Cookie Setting"
+    }
   }
 }

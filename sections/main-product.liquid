@@ -1,0 +1,451 @@
+{{ 'main-product.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'main-product.js' | asset_url }}" defer></script>
+
+{%- assign main_product = product -%}
+{%- assign form_id = 'main-product-form-' | append: section.id -%}
+
+{%- if main_product == blank -%}
+  <p class="product-not-found">
+    {{ 'products.product.banner.not_found' | t }}
+  </p>
+{%- else -%}
+  {%- assign related_products_list = main_product.metafields.custom.related_products.value -%}
+  <div
+    id="main-product-{{ section.id }}"
+    class="product-grid full-width"
+    data-section-id="{{ section.id }}"
+  >
+    <div class="product-grid__container">
+      <div class="product-layout">
+        <div class="product-gallery">
+          <div class="product-gallery__main-wrapper">
+            {%- if section.settings.rated -%}
+              <div class="product-gallery__badge">
+                <div class="product-gallery__badge-icon">
+                  {{ 'star-small.svg' | inline_asset_content }}
+                </div>
+                <div class="product-gallery__badge-text">
+                  {{ 'products.product.banner.highly_rated' | t }}
+                </div>
+              </div>
+            {%- endif -%}
+
+            <div class="product-gallery__main">
+              {%- unless main_product.media == blank -%}
+                {%- for media in main_product.media limit: 5 -%}
+                  <div
+                    class="product-gallery__media-item {% unless forloop.first %}hidden{% endunless %}"
+                    data-media-index="{{ forloop.index0 }}"
+                  >
+                    {%- case media.media_type -%}
+                      {%- when 'image' -%}
+                        {%- if forloop.first -%}
+                          {{
+                            media
+                            | image_url: width: 750
+                            | image_tag:
+                              width: 536,
+                              height: 536,
+                              sizes: '(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 536px',
+                              widths: '288,375,536,640,750',
+                              loading: 'eager',
+                              alt: media.alt
+                            | default: main_product.title
+                            | escape
+                          }}
+                        {%- else -%}
+                          {{
+                            media
+                            | image_url: width: 750
+                            | image_tag:
+                              width: 536,
+                              height: 536,
+                              sizes: '(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 536px',
+                              widths: '288,375,536,640,750',
+                              loading: 'lazy',
+                              alt: media.alt
+                            | default: main_product.title
+                            | escape
+                          }}
+                        {%- endif -%}
+                      {%- when 'video' -%}
+                        {{ media | video_tag: image_size: '750x', controls: true }}
+                      {%- when 'external_video' -%}
+                        {%- if media.host == 'youtube' -%}
+                          <iframe
+                            src="https://www.youtube.com/embed/{{ media.external_id }}?enablejsapi=1"
+                            allow="autoplay; encrypted-media"
+                            allowfullscreen
+                          ></iframe>
+                        {%- elsif media.host == 'vimeo' -%}
+                          <iframe
+                            src="https://player.vimeo.com/video/{{ media.external_id }}?api=1"
+                            allow="autoplay; fullscreen"
+                            allowfullscreen
+                          ></iframe>
+                        {%- else -%}
+                          {{ media | external_video_tag: image_size: '750x' }}
+                        {%- endif -%}
+                    {%- endcase -%}
+                  </div>
+                {%- endfor -%}
+              {%- else -%}
+                <div class="product-gallery__media-item">
+                  {{ 'product-1' | placeholder_svg_tag }}
+                </div>
+              {%- endunless -%}
+            </div>
+          </div>
+          {%- unless main_product.media == blank -%}
+            <div class="product-gallery__thumbs">
+              {%- for media in main_product.media limit: 5 -%}
+                <button
+                  type="button"
+                  class="product-gallery__thumb {% if forloop.first %}product-gallery__thumb--active{% endif %}"
+                  data-media-index="{{ forloop.index0 }}"
+                  aria-label="{{ 'products.product.banner.view_image' | t }} {{ forloop.index }}"
+                >
+                  {%- case media.media_type -%}
+                    {%- when 'image' -%}
+                      {%- if forloop.first -%}
+                        {{
+                          media
+                          | image_url: width: 176
+                          | image_tag:
+                            width: 88,
+                            height: 88,
+                            sizes: '88px',
+                            widths: '88,176',
+                            loading: 'eager',
+                            alt: media.alt
+                          | default: main_product.title
+                          | escape
+                        }}
+                      {%- else -%}
+                        {{
+                          media
+                          | image_url: width: 176
+                          | image_tag:
+                            width: 88,
+                            height: 88,
+                            sizes: '88px',
+                            widths: '88,176',
+                            loading: 'lazy',
+                            alt: media.alt
+                          | default: main_product.title
+                          | escape
+                        }}
+                      {%- endif -%}
+                    {%- when 'video', 'external_video' -%}
+                      {{
+                        media.preview_image
+                        | image_url: width: 176
+                        | image_tag:
+                          width: 88,
+                          height: 88,
+                          sizes: '88px',
+                          widths: '88,176',
+                          loading: 'lazy',
+                          alt: media.alt
+                        | default: main_product.title
+                        | escape
+                      }}
+                      <div class="product-gallery__video-icon">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M2 1.5L10 6L2 10.5V1.5Z" fill="white" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+                        </svg>
+                      </div>
+                  {%- endcase -%}
+                </button>
+              {%- endfor -%}
+            </div>
+          {%- endunless -%}
+        </div>
+
+        <div class="product-detail">
+          <div class="product-detail__header">
+            <h2 class="product-detail__title">
+              {{ main_product.title | escape }}
+            </h2>
+
+            <div class="product-detail__rating" role="img" aria-label="Rating: {{ section.settings.rating_text | default: '5.0' }} out of 5 stars">
+              {%- assign rating_value = section.settings.rating | default: 5 -%}
+              {%- for i in (1..5) -%}
+                {%- if i <= rating_value -%}
+                  <img src="{{ 'rating-star.svg' | asset_url }}" class="product-detail__star" alt="" role="presentation" width="16" height="16">
+                {%- else -%}
+                  <img src="{{ 'rating-star-empty.svg' | asset_url }}" class="product-detail__star" alt="" role="presentation" width="16" height="16">
+                {%- endif -%}
+              {%- endfor -%}
+              <span class="product-detail__rating-score" aria-hidden="true">{{ section.settings.rating_text | default: '5.0' }}</span>
+            </div>
+
+            {% if main_product.description != blank %}
+              <p class="product-detail__description">
+                {{ product.description | strip_html }}
+              </p>
+            {% endif %}
+
+            {%- assign selected_variant = main_product.selected_or_first_available_variant -%}
+
+            <div class="product-detail__price-availability">
+              <div id="variant-price-{{ section.id }}">
+                {%- render 'price-block', variant: selected_variant -%}
+              </div>
+              <div class="product-detail__availability" id="variant-availability-{{ section.id }}">
+                {%- if selected_variant.available -%}
+                  {%- if selected_variant.inventory_quantity > 0 -%}
+                    {%- if selected_variant.inventory_quantity < 2 -%}
+                      <span class="product-detail__availability-text product-detail__availability-text--low-stock">
+                        {{ 'products.product.banner.low_stock' | t | default: 'Low stock' }}
+                      </span>
+                    {%- elsif selected_variant.inventory_quantity < 10 -%}
+                      <span class="product-detail__availability-text product-detail__availability-text--running-out">
+                        {{ 'products.product.banner.running_out' | t | default: 'Running out' }}
+                      </span>
+                    {%- else -%}
+                      <span class="product-detail__availability-text product-detail__availability-text--in-stock">
+                        {{ 'products.product.banner.in_stock' | t | default: 'In stock' }}
+                      </span>
+                    {%- endif -%}
+                  {%- else -%}
+                    <span class="product-detail__availability-text product-detail__availability-text--in-stock">
+                      {{ 'products.product.banner.in_stock' | t | default: 'In stock' }}
+                    </span>
+                  {%- endif -%}
+                {%- else -%}
+                  <span class="product-detail__availability-text product-detail__availability-text--unavailable">
+                    {{ 'products.product.banner.unavailable' | t | default: 'Out of stock' }}
+                  </span>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+
+          {%- form 'product', main_product, id: form_id, class: 'product-detail__form' -%}
+            <input
+              type="hidden"
+              name="id"
+              id="product-variant-id-{{ section.id }}"
+              value="{{ main_product.selected_or_first_available_variant.id }}"
+            >
+
+            <div class="product-detail__options">
+              <div class="product-detail__colors">
+                <div class="product-detail__color-list">
+                  {%- for related_product in related_products_list -%}
+                    {%- assign related_media = related_product.main_media | default: related_product.media.first -%}
+                    <button
+                      type="button"
+                      class="product-detail__color {% if related_product.id == main_product.id %}product-detail__color--active{% endif %}"
+                      data-product-handle="{{ related_product.handle }}"
+                      data-product-id="{{ related_product.id }}"
+                      data-section-id="{{ section.id }}"
+                      {% if related_media %}
+                        data-color-image="{{ related_media | image_url: width: 176 }}"
+                      {% endif %}
+                      aria-label="{{ related_product.title }}"
+                    >
+                      {%- if related_media -%}
+                        {{
+                          related_media
+                          | image_url: width: 400
+                          | image_tag: width: 88, height: 88, loading: 'lazy', alt: related_product.title
+                        }}
+                      {%- else -%}
+                        <span>{{ related_product.title }}</span>
+                      {%- endif -%}
+                    </button>
+                  {%- endfor -%}
+                </div>
+              </div>
+
+              {%- if main_product.has_only_default_variant == false -%}
+                <div class="product-detail__sizes">
+                  <div class="product-detail__sizes-header">
+                    <h3 class="product-detail__option-title">
+                      {{ 'products.product.banner.select_size' | t | default: 'Select size' }}:
+                    </h3>
+                    <span class="product-detail__size-guide">
+                      {{ 'products.product.banner.size_guide' | t | default: 'Size Guide' }}
+                    </span>
+                  </div>
+
+                  <div class="product-detail__size-list" id="size-options-{{ section.id }}">
+                    {%- for variant in main_product.variants -%}
+                      <button
+                        type="button"
+                        class="product-detail__size"
+                        data-variant-id="{{ variant.id }}"
+                        data-variant-available="{{ variant.available }}"
+                        {% unless variant.available %}
+                          disabled
+                        {% endunless %}
+                      >
+                        {{ variant.title }}
+                      </button>
+                    {%- endfor -%}
+                  </div>
+                </div>
+              {%- endif -%}
+            </div>
+
+            {%- render 'add-to-cart-button', section_id: section.id -%}
+          {%- endform -%}
+
+          <div class="product-detail__features">
+            <div class="product-detail__feature">
+              <img
+                class="product-detail__feature-icon"
+                src="{{ 'shipping-icon.svg' |  asset_url }}"
+                alt="Shipping icon"
+                width="20"
+                height="20"
+              >
+              <span class="product-detail__feature-text">{{ 'products.product.banner.free_shipping' | t }}</span>
+            </div>
+            <div class="product-detail__feature">
+              <img
+                class="product-detail__feature-icon"
+                src="{{ 'checkout-icon.svg' | asset_url }}"
+                alt="Checkout icon"
+                width="20"
+                height="20"
+              >
+              <span class="product-detail__feature-text">{{ 'products.product.banner.secure_checkout' | t }}</span>
+            </div>
+            <div class="product-detail__feature">
+              <img
+                class="product-detail__feature-icon"
+                src="{{ 'afterplay-logo.svg' | asset_url }}"
+                alt="Checkout icon"
+                width="20"
+                height="20"
+              >
+              <span class="product-detail__feature-text">{{ 'products.product.banner.afterpay' | t }}</span>
+            </div>
+          </div>
+
+          {% assign product_tagline = main_product.metafields.custom.tagline %}
+          {% if product_tagline != blank %}
+            <p class="product-detail__tagline product-detail__description">
+              {{ product_tagline | escape }}
+            </p>
+          {% endif %}
+
+          {%- render 'accordion', product: main_product -%}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {%- render 'size-guide-modal' -%}
+
+  <div class="sticky-atc" id="sticky-atc-{{ section.id }}" data-section-id="{{ section.id }}">
+    <div class="sticky-atc__container">
+      <div class="sticky-atc__product-info">
+        {%- if main_product.featured_media -%}
+          <img
+            class="sticky-atc__image"
+            src="{{ main_product.featured_media | image_url: width: 120 }}"
+            alt="{{ main_product.title | escape }}"
+            width="60"
+            height="60"
+            loading="lazy"
+          >
+        {%- endif -%}
+        <div class="sticky-atc__details">
+          <h3 class="sticky-atc__title">{{ main_product.title | escape }}</h3>
+          <div class="sticky-atc__price" id="sticky-price-{{ section.id }}">
+            {%- render 'price-block', variant: selected_variant -%}
+          </div>
+        </div>
+      </div>
+
+      <div class="sticky-atc__actions">
+        <div class="sticky-atc__color-selector">
+          <span class="sticky-atc__label">{{ 'products.product.banner.color' | t }}:</span>
+          <div class="sticky-atc__color-list">
+            {%- for related_product in related_products_list -%}
+              {%- assign related_media = related_product.main_media | default: related_product.media.first -%}
+              <button
+                type="button"
+                class="sticky-atc__color {% if related_product.id == main_product.id %}sticky-atc__color--active{% endif %}"
+                data-product-handle="{{ related_product.handle }}"
+                data-product-id="{{ related_product.id }}"
+                data-section-id="{{ section.id }}"
+                {% if related_media %}
+                  data-color-image="{{ related_media | image_url: width: 176 }}"
+                {% endif %}
+                aria-label="{{ related_product.title }}"
+              >
+                {%- if related_media -%}
+                  {{
+                    related_media
+                    | image_url: width: 88
+                    | image_tag: width: 44, height: 44, loading: 'lazy', alt: related_product.title
+                  }}
+                {%- else -%}
+                  <span>{{ related_product.title }}</span>
+                {%- endif -%}
+              </button>
+            {%- endfor -%}
+          </div>
+        </div>
+
+        <div class="sticky-atc__size-selector" id="sticky-size-{{ section.id }}">
+          <span class="sticky-atc__label">{{ 'products.product.banner.size' | t }}:</span>
+          {% render 'custom-size-select',
+            id: section.id,
+            variants: main_product.variants,
+            selected_variant: selected_variant
+          %}
+        </div>
+
+        <button
+          class="sticky-atc__button"
+          id="sticky-submit-{{ section.id }}"
+          type="button"
+        >
+          {{ 'products.product.banner.add_to_bag' | t }}
+        </button>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Main Product",
+  "tag": "section",
+  "class": "main-product",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "rated",
+      "label": "Show highly rated badge",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Rating (1-5 stars)",
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "rating_text",
+      "label": "Rating Score Text",
+      "default": "5.0"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Main Product"
+    }
+  ]
+}
+{% endschema %}

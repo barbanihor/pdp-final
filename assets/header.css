@@ -1,0 +1,75 @@
+.shopify-section-group-header-group {
+  padding-inline: var(--layout-padding-mobile);
+  display: flex;
+}
+
+@media (min-width: 1024px) {
+  .shopify-section-group-header-group {
+    padding-inline: var(--layout-padding-desktop);
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 56px;
+}
+
+.header__nav {
+  width: 100%;
+  max-width: var(--layout-max-width);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header__menu {
+  display: none;
+  gap: 32px;
+  list-style: none;
+  padding: 0;
+}
+
+.header__menu-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.header__menu-btn {
+}
+
+.header__logo-link {
+  display: none;
+}
+
+.header__burger-menu-img,
+.header__cart-img {
+  width: 24px;
+  height: 24px;
+}
+
+@media (min-width: 768px) {
+  .header {
+    height: 84px;
+  }
+
+  .header__menu-btn {
+  }
+}
+
+@media (min-width: 1024px) {
+  .header__menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .header__menu-btn {
+    display: none;
+  }
+
+  .header__logo-link {
+    display: block;
+  }
+}

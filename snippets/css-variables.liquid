@@ -1,0 +1,23 @@
+{% comment %}
+  Generates CSS variables from theme settings
+{% endcomment %}
+
+<style>
+  :root {
+    /* Font variables from theme settings */
+    --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
+    --font-primary--weight: {{ settings.type_primary_font.weight }};
+    --font-primary--style: {{ settings.type_primary_font.style }};
+
+    /* Color variables from theme settings */
+    --color-background: {{ settings.background_color | default: '#FFFFFF' }};
+    --color-foreground: {{ settings.foreground_color | default: '#333333' }};
+
+    /* Style variables from theme settings */
+    --style-border-radius-inputs: {{ settings.input_corner_radius | default: 4 }}px;
+
+    /* Page layout variables from theme settings */
+    --page-width: {{ settings.max_page_width | default: '90rem' }};
+    --page-margin: {{ settings.min_page_margin | default: 20 }}px;
+  }
+</style>

@@ -1,43 +1,44 @@
-<product-recommendations class="product-recommendations" data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit=8&intent=related">
+<product-recommendations
+  class="product-recommendations"
+  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit=8&intent=related"
+>
   {%- if recommendations.performed and recommendations.products_count > 0 -%}
     <div class="product-recommendations__container">
       <h2 class="product-recommendations__title">You may also like</h2>
 
       <div class="product-recommendations__slider-wrapper">
-        <button class="product-recommendations__arrow product-recommendations__arrow--prev" aria-label="Previous products">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-
-        <div class="product-recommendations__slider">
-          <div class="product-recommendations__grid">
+        <div class="swiper product-recommendations__swiper">
+          <div class="swiper-wrapper">
             {%- for product in recommendations.products -%}
-              <div class="product-card">
-                <a href="{{ product.url }}" class="product-card__link">
-                  <div class="product-card__image-wrapper">
-                    <img
-                      class="product-card__image"
-                      src="{{ product.featured_image | image_url: width: 600 }}"
-                      alt="{{ product.featured_image.alt | escape }}"
-                      loading="lazy"
-                      width="312"
-                      height="312"
-                    >
-                  </div>
+              <div class="swiper-slide">
+                <div class="product-card">
+                  <a href="{{ product.url }}" class="product-card__link">
+                    <div class="product-card__image-wrapper">
+                      <img
+                        class="product-card__image"
+                        src="{{ product.featured_image | image_url: width: 600 }}"
+                        alt="{{ product.featured_image.alt | escape }}"
+                        loading="lazy"
+                        width="312"
+                        height="312"
+                      >
+                    </div>
 
-                  <p class="product-card__title">{{ product.title }}</p>
-                  <p class="product-card__price">{{ product.price | money }}</p>
-                </a>
+                    <p class="product-card__title">{{ product.title }}</p>
+                    <p class="product-card__price">{{ product.price | money }}</p>
+                  </a>
+                </div>
               </div>
             {%- endfor -%}
           </div>
         </div>
 
-        <button class="product-recommendations__arrow product-recommendations__arrow--next" aria-label="Next products">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+        <button type="button" class="product-recommendations__arrow product-recommendations__arrow--prev" aria-label="Previous">
+          {{ 'left-arrow.svg' | asset_url | img_tag: '', loading: 'lazy', width: 40, height: 40 }}
+        </button>
+
+        <button type="button" class="product-recommendations__arrow product-recommendations__arrow--next" aria-label="Next">
+          {{ 'right-arrow.svg' | asset_url | img_tag: '', loading: 'lazy', width: 40, height: 40 }}
         </button>
       </div>
     </div>
@@ -49,52 +50,48 @@
     constructor() {
       super();
       this.productHandle = null;
+      this.swiper = null;
     }
 
     connectedCallback() {
       this.loadRecommendations();
-      this.setupSlider();
+      this.initSwiper();
 
       // Listen for product changes
       document.addEventListener('product:changed', (e) => {
-        console.log('Product changed event received:', e.detail.productHandle);
         this.productHandle = e.detail.productHandle;
         this.loadRecommendations();
       });
     }
 
-    setupSlider() {
-      const slider = this.querySelector('.product-recommendations__slider');
-      const prevBtn = this.querySelector('.product-recommendations__arrow--prev');
-      const nextBtn = this.querySelector('.product-recommendations__arrow--next');
+    initSwiper() {
+      // Wait for Swiper to be available
+      if (typeof Swiper === 'undefined') {
+        setTimeout(() => this.initSwiper(), 100);
+        return;
+      }
 
-      if (!slider || !prevBtn || !nextBtn) return;
+      const swiperEl = this.querySelector('.product-recommendations__swiper');
+      if (!swiperEl) return;
 
-      const updateArrowsVisibility = () => {
-        const scrollLeft = slider.scrollLeft;
-        const maxScroll = slider.scrollWidth - slider.clientWidth;
+      // Destroy existing swiper if it exists
+      if (this.swiper) {
+        this.swiper.destroy(true, true);
+      }
 
-        prevBtn.style.display = scrollLeft > 10 ? 'flex' : 'none';
-        nextBtn.style.display = scrollLeft < maxScroll - 10 ? 'flex' : 'none';
-      };
-
-      // Initial state
-      updateArrowsVisibility();
-
-      // Update on scroll
-      slider.addEventListener('scroll', updateArrowsVisibility);
-
-      // Arrow clicks
-      prevBtn.addEventListener('click', () => {
-        const cardWidth = this.querySelector('.product-card').offsetWidth;
-        const gap = 20;
-        slider.scrollBy({ left: -(cardWidth + gap) * 4, behavior: 'smooth' });
-      });
-
-      nextBtn.addEventListener('click', () => {
-        const cardWidth = this.querySelector('.product-card').offsetWidth;
-        const gap = 20;
-        slider.scrollBy({ left: (cardWidth + gap) * 4, behavior: 'smooth' });
+      this.swiper = new Swiper(swiperEl, {
+        slidesPerView: 'auto',
+        spaceBetween: 16,
+        freeMode: true,
+        navigation: {
+          prevEl: this.querySelector('.product-recommendations__arrow--prev'),
+          nextEl: this.querySelector('.product-recommendations__arrow--next'),
+        },
+        breakpoints: {
+          1024: {
+            spaceBetween: 24,
+          },
+        },
       });
     }
 
@@ -103,14 +100,11 @@
 
       // If product was changed, update URL with new product handle
       if (this.productHandle) {
-        console.log('Loading recommendations for product:', this.productHandle);
         const productId = await this.getProductIdFromHandle(this.productHandle);
-        console.log('Product ID:', productId);
         if (productId) {
           const urlObj = new URL(url, window.location.origin);
           urlObj.searchParams.set('product_id', productId);
           url = urlObj.toString();
-          console.log('Updated URL:', url);
         }
       }
 
@@ -123,8 +117,8 @@
 
           if (recommendations && recommendations.innerHTML.trim().length) {
             this.innerHTML = recommendations.innerHTML;
-            // Re-setup slider after content update
-            this.setupSlider();
+            // Re-initialize Swiper after content update
+            this.initSwiper();
           }
         })
         .catch((e) => {
@@ -150,6 +144,8 @@
 {% schema %}
 {
   "name": "Product recommendations",
+  "tag": "section",
+  "class": "product-recommendations-section",
   "settings": [],
   "presets": [
     {

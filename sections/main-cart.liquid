@@ -29,6 +29,7 @@
                   class="cart__qty-btn"
                   data-action="decrease"
                   data-line="{{ forloop.index }}"
+                  aria-label="Decrease quantity"
                   {% if item.quantity <= 1 %}disabled{% endif %}
                 >
                   -
@@ -39,6 +40,7 @@
                   value="{{ item.quantity }}"
                   min="1"
                   data-line="{{ forloop.index }}"
+                  aria-label="Quantity"
                   readonly
                 >
                 <button
@@ -46,6 +48,7 @@
                   class="cart__qty-btn"
                   data-action="increase"
                   data-line="{{ forloop.index }}"
+                  aria-label="Increase quantity"
                 >
                   +
                 </button>
@@ -59,6 +62,7 @@
                 type="button"
                 class="cart__item-remove"
                 data-line="{{ forloop.index }}"
+                aria-label="Remove {{ item.product.title }} from cart"
               >
                 {{ 'cart.remove' | t }}
               </button>

@@ -17,6 +17,30 @@ class MainProduct {
     this.setupForm();
     this.setupAccordionHandlers();
     this.setupStickyATC();
+    this.autoplayFirstVideo();
+  }
+
+  // Auto-play first video if the first media item is a video
+  autoplayFirstVideo() {
+    const firstMediaItem = this.section.querySelector('.product-gallery__media-item:not(.hidden)');
+
+    if (!firstMediaItem) return;
+
+    // Check for native video
+    const video = firstMediaItem.querySelector('video');
+    if (video) {
+      video.play();
+      return;
+    }
+
+    // Check for external video (iframe)
+    const iframe = firstMediaItem.querySelector('iframe');
+    if (iframe) {
+      // Wait a bit for iframe to load
+      setTimeout(() => {
+        this.playExternalVideo(iframe);
+      }, 500);
+    }
   }
 
   // Gallery thumbnail clicks
@@ -34,14 +58,78 @@ class MainProduct {
 
         // Hide all images, show selected
         images.forEach((img) => {
-          if (img.getAttribute('data-media-index') === index) {
+          const imgIndex = img.getAttribute('data-media-index');
+
+          if (imgIndex === index) {
             img.classList.remove('hidden');
+
+            // Auto-play video if selected media is a video
+            const video = img.querySelector('video');
+            if (video) {
+              video.play();
+            }
+
+            // Auto-play external video (iframe - YouTube, Vimeo, etc.)
+            const iframe = img.querySelector('iframe');
+            if (iframe) {
+              this.playExternalVideo(iframe);
+            }
           } else {
             img.classList.add('hidden');
+
+            // Pause video if it's being hidden
+            const video = img.querySelector('video');
+            if (video) {
+              video.pause();
+              video.currentTime = 0;
+            }
+
+            // Pause external video (iframe)
+            const iframe = img.querySelector('iframe');
+            if (iframe) {
+              this.pauseExternalVideo(iframe);
+            }
           }
         });
       });
     });
+  }
+
+  // Play external video (YouTube, Vimeo)
+  playExternalVideo(iframe) {
+    const src = iframe.src;
+
+    if (src.includes('youtube.com') || src.includes('youtu.be')) {
+      // YouTube: add autoplay parameter
+      if (!src.includes('autoplay=1')) {
+        const separator = src.includes('?') ? '&' : '?';
+        iframe.src = src + separator + 'autoplay=1&mute=0';
+      }
+      // Try postMessage API
+      iframe.contentWindow.postMessage(
+        JSON.stringify({ event: 'command', func: 'playVideo', args: '' }),
+        '*'
+      );
+    } else if (src.includes('vimeo.com')) {
+      // Vimeo: use postMessage API
+      iframe.contentWindow.postMessage(JSON.stringify({ method: 'play' }), '*');
+    }
+  }
+
+  // Pause external video (YouTube, Vimeo)
+  pauseExternalVideo(iframe) {
+    const src = iframe.src;
+
+    if (src.includes('youtube.com') || src.includes('youtu.be')) {
+      // YouTube: use postMessage API
+      iframe.contentWindow.postMessage(
+        JSON.stringify({ event: 'command', func: 'pauseVideo', args: '' }),
+        '*'
+      );
+    } else if (src.includes('vimeo.com')) {
+      // Vimeo: use postMessage API
+      iframe.contentWindow.postMessage(JSON.stringify({ method: 'pause' }), '*');
+    }
   }
 
   // Fetch product HTML from server
@@ -329,8 +417,22 @@ class MainProduct {
       const newHeader = header.cloneNode(true);
       header.parentNode.replaceChild(newHeader, header);
 
-      newHeader.addEventListener('click', function () {
+      // Add accessibility attributes
+      newHeader.setAttribute('role', 'button');
+      newHeader.setAttribute('tabindex', '0');
+      newHeader.setAttribute('aria-expanded', item.classList.contains('is-open') ? 'true' : 'false');
+
+      const toggleAccordion = function () {
         item.classList.toggle('is-open');
+        newHeader.setAttribute('aria-expanded', item.classList.contains('is-open') ? 'true' : 'false');
+      };
+
+      newHeader.addEventListener('click', toggleAccordion);
+      newHeader.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleAccordion();
+        }
       });
     });
   }

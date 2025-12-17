@@ -125,3 +125,16 @@ p,
   line-height: var(--text-body-medium-height);
   font-weight: var(--text-body-medium-weight);
 }
+
+/* Screen reader only - for accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

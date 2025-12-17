@@ -24,13 +24,14 @@
       {% endfor %}
     </ul>
 
-    <a href="{{ routes.cart_url }}">
+    <a href="{{ routes.cart_url }}" aria-label="Shopping cart">
       <img
         src="{{ "cart-icon.svg" | asset_url }}"
         width="24"
         height="24"
         class="header__cart-img"
-        alt="Shopping cart icon"
+        alt=""
+        role="presentation"
       >
     </a>
   </nav>

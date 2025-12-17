@@ -80,11 +80,28 @@
 
         if (isAccordion) {
           title.style.cursor = 'pointer';
-          title.onclick = () => {
+          title.setAttribute('role', 'button');
+          title.setAttribute('tabindex', '0');
+          title.setAttribute('aria-expanded', section.classList.contains('active') ? 'true' : 'false');
+
+          const toggleAccordion = () => {
             section.classList.toggle('active');
+            title.setAttribute('aria-expanded', section.classList.contains('active') ? 'true' : 'false');
+          };
+
+          title.onclick = toggleAccordion;
+          title.onkeydown = (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              toggleAccordion();
+            }
           };
         } else {
           title.style.cursor = 'default';
+          title.removeAttribute('role');
+          title.removeAttribute('tabindex');
+          title.removeAttribute('aria-expanded');
+          title.onkeydown = null;
           section.classList.remove('active');
         }
       });

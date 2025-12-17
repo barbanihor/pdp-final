@@ -14,12 +14,12 @@
     {% if has_reviews %}
       {% for review in reviews limit: 3 %}
         <div class="review-card">
-          <div class="review-card__stars">
+          <div class="review-card__stars" role="img" aria-label="{{ review.stars }} out of 5 stars">
             {% for i in (1..5) %}
               {% if i <= review.stars %}
-                <img src="{{ 'rating-star.svg' | asset_url }}" alt="Star" class="review-card__star">
+                <img src="{{ 'rating-star.svg' | asset_url }}" alt="" class="review-card__star" role="presentation" width="16" height="16">
               {% else %}
-                <img src="{{ 'rating-star-empty.svg' | asset_url }}" alt="Empty star" class="review-card__star">
+                <img src="{{ 'rating-star-empty.svg' | asset_url }}" alt="" class="review-card__star" role="presentation" width="16" height="16">
               {% endif %}
             {% endfor %}
           </div>
@@ -54,12 +54,12 @@
     {% else %}
       {% comment %} Fallback reviews {% endcomment %}
       <div class="review-card">
-        <div class="review-card__stars">
-          <img src="{{ 'rating-star.svg' | asset_url }}" alt="Star" class="review-card__star">
-          <img src="{{ 'rating-star.svg' | asset_url }}" alt="Star" class="review-card__star">
-          <img src="{{ 'rating-star.svg' | asset_url }}" alt="Star" class="review-card__star">
-          <img src="{{ 'rating-star.svg' | asset_url }}" alt="Star" class="review-card__star">
-          <img src="{{ 'rating-star.svg' | asset_url }}" alt="Star" class="review-card__star">
+        <div class="review-card__stars" role="img" aria-label="5 out of 5 stars">
+          <img src="{{ 'rating-star.svg' | asset_url }}" alt="" class="review-card__star" role="presentation" width="16" height="16">
+          <img src="{{ 'rating-star.svg' | asset_url }}" alt="" class="review-card__star" role="presentation" width="16" height="16">
+          <img src="{{ 'rating-star.svg' | asset_url }}" alt="" class="review-card__star" role="presentation" width="16" height="16">
+          <img src="{{ 'rating-star.svg' | asset_url }}" alt="" class="review-card__star" role="presentation" width="16" height="16">
+          <img src="{{ 'rating-star.svg' | asset_url }}" alt="" class="review-card__star" role="presentation" width="16" height="16">
         </div>
         <p class="review-card__review">Absolutely love this product! The quality is outstanding and it exceeded my expectations. Highly recommend to anyone looking for premium quality.</p>
         <div class="review-card__author">
@@ -79,12 +79,12 @@
       </div>
 
       <div class="review-card">
-        <div class="review-card__stars">
-          <img src="{{ 'rating-star.svg' | asset_url }}" alt="Star" class="review-card__star">
-          <img src="{{ 'rating-star.svg' | asset_url }}" alt="Star" class="review-card__star">
-          <img src="{{ 'rating-star.svg' | asset_url }}" alt="Star" class="review-card__star">
-          <img src="{{ 'rating-star.svg' | asset_url }}" alt="Star" class="review-card__star">
-          <img src="{{ 'rating-star.svg' | asset_url }}" alt="Star" class="review-card__star">
+        <div class="review-card__stars" role="img" aria-label="5 out of 5 stars">
+          <img src="{{ 'rating-star.svg' | asset_url }}" alt="" class="review-card__star" role="presentation" width="16" height="16">
+          <img src="{{ 'rating-star.svg' | asset_url }}" alt="" class="review-card__star" role="presentation" width="16" height="16">
+          <img src="{{ 'rating-star.svg' | asset_url }}" alt="" class="review-card__star" role="presentation" width="16" height="16">
+          <img src="{{ 'rating-star.svg' | asset_url }}" alt="" class="review-card__star" role="presentation" width="16" height="16">
+          <img src="{{ 'rating-star.svg' | asset_url }}" alt="" class="review-card__star" role="presentation" width="16" height="16">
         </div>
         <p class="review-card__review">Great purchase! Fast shipping and the product looks even better in person. The attention to detail is impressive.</p>
         <div class="review-card__author">
@@ -104,12 +104,12 @@
       </div>
 
       <div class="review-card">
-        <div class="review-card__stars">
-          <img src="{{ 'rating-star.svg' | asset_url }}" alt="Star" class="review-card__star">
-          <img src="{{ 'rating-star.svg' | asset_url }}" alt="Star" class="review-card__star">
-          <img src="{{ 'rating-star.svg' | asset_url }}" alt="Star" class="review-card__star">
-          <img src="{{ 'rating-star.svg' | asset_url }}" alt="Star" class="review-card__star">
-          <img src="{{ 'rating-star-empty.svg' | asset_url }}" alt="Empty star" class="review-card__star">
+        <div class="review-card__stars" role="img" aria-label="4 out of 5 stars">
+          <img src="{{ 'rating-star.svg' | asset_url }}" alt="" class="review-card__star" role="presentation" width="16" height="16">
+          <img src="{{ 'rating-star.svg' | asset_url }}" alt="" class="review-card__star" role="presentation" width="16" height="16">
+          <img src="{{ 'rating-star.svg' | asset_url }}" alt="" class="review-card__star" role="presentation" width="16" height="16">
+          <img src="{{ 'rating-star.svg' | asset_url }}" alt="" class="review-card__star" role="presentation" width="16" height="16">
+          <img src="{{ 'rating-star-empty.svg' | asset_url }}" alt="" class="review-card__star" role="presentation" width="16" height="16">
         </div>
         <p class="review-card__review">Very satisfied with my order. The product is well-made and stylish. Would definitely buy again!</p>
         <div class="review-card__author">

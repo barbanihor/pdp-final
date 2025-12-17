@@ -69,9 +69,23 @@
                           }}
                         {%- endif -%}
                       {%- when 'video' -%}
-                        {{ media | video_tag: image_size: '750x', controls: true, width: 536, height: 536 }}
+                        {{ media | video_tag: image_size: '750x', controls: true }}
                       {%- when 'external_video' -%}
-                        {{ media | external_video_tag: image_size: '750x', width: 536, height: 536 }}
+                        {%- if media.host == 'youtube' -%}
+                          <iframe
+                            src="https://www.youtube.com/embed/{{ media.external_id }}?enablejsapi=1"
+                            allow="autoplay; encrypted-media"
+                            allowfullscreen
+                          ></iframe>
+                        {%- elsif media.host == 'vimeo' -%}
+                          <iframe
+                            src="https://player.vimeo.com/video/{{ media.external_id }}?api=1"
+                            allow="autoplay; fullscreen"
+                            allowfullscreen
+                          ></iframe>
+                        {%- else -%}
+                          {{ media | external_video_tag: image_size: '750x' }}
+                        {%- endif -%}
                     {%- endcase -%}
                   </div>
                 {%- endfor -%}
@@ -154,16 +168,16 @@
               {{ main_product.title | escape }}
             </h2>
 
-            <div class="product-detail__rating">
+            <div class="product-detail__rating" role="img" aria-label="Rating: {{ section.settings.rating_text | default: '5.0' }} out of 5 stars">
               {%- assign rating_value = section.settings.rating | default: 5 -%}
               {%- for i in (1..5) -%}
                 {%- if i <= rating_value -%}
-                  {{ 'rating-star.svg' | asset_url | img_tag: '', class: 'product-detail__star' }}
+                  <img src="{{ 'rating-star.svg' | asset_url }}" class="product-detail__star" alt="" role="presentation" width="16" height="16">
                 {%- else -%}
-                  {{ 'rating-star-empty.svg' | asset_url | img_tag: '', class: 'product-detail__star' }}
+                  <img src="{{ 'rating-star-empty.svg' | asset_url }}" class="product-detail__star" alt="" role="presentation" width="16" height="16">
                 {%- endif -%}
               {%- endfor -%}
-              <span class="product-detail__rating-score">{{ section.settings.rating_text | default: '5.0' }}</span>
+              <span class="product-detail__rating-score" aria-hidden="true">{{ section.settings.rating_text | default: '5.0' }}</span>
             </div>
 
             {% if main_product.description != blank %}
@@ -276,13 +290,7 @@
               {%- endif -%}
             </div>
 
-            <button
-              id="submit-btn-{{ section.id }}"
-              class="product-detail__submit-btn"
-              type="submit"
-            >
-              {{ 'products.product.banner.add_to_bag' | t }}
-            </button>
+            {%- render 'add-to-cart-button', section_id: section.id -%}
           {%- endform -%}
 
           <div class="product-detail__features">
